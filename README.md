@@ -1,11 +1,11 @@
 # Terraform AWS Registry (Tapir + Cognito)
 
 
-[![InfraHouse](https://img.shields.io/badge/InfraHouse-Terraform_Module-blue?style=for-the-badge&logo=terraform)](https://registry.terraform.io/namespaces/infrahouse)
+[![InfraHouse](https://img.shields.io/badge/InfraHouse-Terraform_Module-blue?style=for-the-badge&logo=terraform)](https://registry.terraform.io/modules/infrahouse/registry/aws/latest)
 [![License](https://img.shields.io/github/license/infrahouse/terraform-aws-registry?style=for-the-badge)](LICENSE)
 [![AWS Cognito](https://img.shields.io/badge/Auth-AWS_Cognito-orange?style=for-the-badge&logo=amazonaws)](https://aws.amazon.com/cognito/)
 [![Tapir](https://img.shields.io/badge/Backend-Tapir-lightgrey?style=for-the-badge&logo=open-source-initiative)](https://github.com/PacoVK/tapir)
-[![GitHub Actions](https://img.shields.io/github/actions/workflow/status/infrahouse/terraform-aws-registry/ci.yml?style=for-the-badge&logo=githubactions&label=CI)](https://github.com/infrahouse/terraform-aws-registry/actions)
+[![GitHub Actions](https://img.shields.io/github/actions/workflow/status/infrahouse/terraform-aws-registry/terraform-CI.yml?style=for-the-badge&logo=githubactions&label=CI)](https://github.com/infrahouse/terraform-aws-registry/actions)
 
 A Terraform module that provisions a self-hosted Terraform Registry powered by [Tapir](https://github.com/PacoVK/tapir)
 and authenticated through Amazon Cognito instead of Keycloak.
