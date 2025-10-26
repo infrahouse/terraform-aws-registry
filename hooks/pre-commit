@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+make lint
+echo "Happy coding!"
