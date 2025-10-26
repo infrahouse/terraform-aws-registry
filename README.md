@@ -69,7 +69,7 @@ Instead of Keycloak, this module configures a managed Amazon Cognito user pool a
 ```hcl
 module "terraform-registry" {
   source  = "infrahouse/registry/aws"
-  version = "0.1.0"
+  version = "0.2.0"
 
   environment      = "development"
 
