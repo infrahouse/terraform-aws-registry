@@ -77,3 +77,9 @@ variable "registry_hostname" {
   type        = string
   default     = "registry"
 }
+
+variable "service_name" {
+  description = "Name of the service"
+  type        = string
+  default     = "terraform-registry"
+}

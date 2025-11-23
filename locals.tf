@@ -1,7 +1,7 @@
 locals {
   module_version = "0.2.0"
 
-  service_name = "terraform-registry"
+  service_name = var.service_name
 
   default_module_tags = {
     environment : var.environment

@@ -51,7 +51,7 @@ fmt: format
 format:  ## Use terraform fmt to format all files in the repo
 	@echo "Formatting terraform files"
 	terraform fmt -recursive
-	black tests modules
+	black tests
 
 .PHONY: test-keep
 test-keep:  ## Run a test and keep resources
