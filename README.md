@@ -94,6 +94,9 @@ When the user visits the registry (for example, https://registry.example.com) an
 Cognito will prompt them to set a new **permanent password** before granting access.
 
 Once the password is changed, the user is redirected back to Tapir and can immediately use the private Terraform Registry.
+
+<!-- BEGIN_TF_DOCS -->
+
 ## Requirements
 
 | Name | Version |
@@ -155,6 +158,7 @@ Once the password is changed, the user is redirected back to Tapir and can immed
 | <a name="input_gh_org_name"></a> [gh\_org\_name](#input\_gh\_org\_name) | GitHub organization name that owns the Terraform module repositories | `string` | `"infrahouse"` | no |
 | <a name="input_on_demand_base_capacity"></a> [on\_demand\_base\_capacity](#input\_on\_demand\_base\_capacity) | Minimum number of on-demand instances in the Auto Scaling Group | `number` | `1` | no |
 | <a name="input_registry_hostname"></a> [registry\_hostname](#input\_registry\_hostname) | Hostname for the Terraform registry (will be combined with the Route53 zone) | `string` | `"registry"` | no |
+| <a name="input_service_name"></a> [service\_name](#input\_service\_name) | Name of the service | `string` | `"terraform-registry"` | no |
 | <a name="input_subnets_backend"></a> [subnets\_backend](#input\_subnets\_backend) | List of subnet IDs for ECS instances and backend services | `list(string)` | n/a | yes |
 | <a name="input_subnets_frontend"></a> [subnets\_frontend](#input\_subnets\_frontend) | List of subnet IDs for the load balancer | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Additional tags to apply to all resources | `map(string)` | `{}` | no |
@@ -170,3 +174,4 @@ Once the password is changed, the user is redirected back to Tapir and can immed
 | <a name="output_registry_client_role_arns"></a> [registry\_client\_role\_arns](#output\_registry\_client\_role\_arns) | Map of repository names to their IAM role ARNs for registry clients |
 | <a name="output_registry_client_role_names"></a> [registry\_client\_role\_names](#output\_registry\_client\_role\_names) | Map of repository names to their IAM role names for registry clients |
 | <a name="output_registry_url"></a> [registry\_url](#output\_registry\_url) | HTTPS URL of the Terraform registry |
+<!-- END_TF_DOCS -->
