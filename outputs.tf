@@ -20,3 +20,13 @@ output "registry_client_role_arns" {
     repo => module.registry-client-roles[repo].github_role_arn
   }
 }
+
+output "bucket_arn" {
+  description = "ARN of the S3 bucket used for the Terraform registry"
+  value       = module.terraform-registry-bucket.bucket_arn
+}
+
+output "bucket_name" {
+  description = "Name of the S3 bucket used for the Terraform registry"
+  value       = module.terraform-registry-bucket.bucket_name
+}
