@@ -171,6 +171,8 @@ Once the password is changed, the user is redirected back to Tapir and can immed
 
 | Name | Description |
 |------|-------------|
+| <a name="output_bucket_arn"></a> [bucket\_arn](#output\_bucket\_arn) | ARN of the S3 bucket used for the Terraform registry |
+| <a name="output_bucket_name"></a> [bucket\_name](#output\_bucket\_name) | Name of the S3 bucket used for the Terraform registry |
 | <a name="output_registry_client_role_arns"></a> [registry\_client\_role\_arns](#output\_registry\_client\_role\_arns) | Map of repository names to their IAM role ARNs for registry clients |
 | <a name="output_registry_client_role_names"></a> [registry\_client\_role\_names](#output\_registry\_client\_role\_names) | Map of repository names to their IAM role names for registry clients |
 | <a name="output_registry_url"></a> [registry\_url](#output\_registry\_url) | HTTPS URL of the Terraform registry |
