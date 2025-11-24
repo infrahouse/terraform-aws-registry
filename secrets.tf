@@ -1,6 +1,6 @@
 module "registry_client_secret" {
   source             = "registry.infrahouse.com/infrahouse/secret/aws"
-  version            = "1.1.0"
+  version            = "1.1.1"
   environment        = var.environment
   secret_name_prefix = "registry-client-secret"
   secret_description = "Oauth2 credentials with Google"
