@@ -91,6 +91,12 @@ resource "aws_cognito_user_pool_client" "this" {
 resource "random_password" "users" {
   for_each = { for user in var.cognito_users : user.email => user }
   length   = local.minimum_password_length + 1
+
+  # Require one of a group to match the Cognito password policy:
+  min_lower   = 1
+  min_numeric = 1
+  min_special = 1
+  min_upper   = 1
 }
 
 resource "aws_cognito_user" "users" {
