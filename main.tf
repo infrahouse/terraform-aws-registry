@@ -74,6 +74,22 @@ module "ecs" {
       name : "REGISTRY_PORT"
       value : 443
     },
+    {
+      name : "BACKEND_TABLE_MODULES"
+      value : aws_dynamodb_table.registry_tables["Modules"].name
+    },
+    {
+      name : "BACKEND_TABLE_PROVIDER"
+      value : aws_dynamodb_table.registry_tables["Providers"].name
+    },
+    {
+      name : "BACKEND_TABLE_REPORTS"
+      value : aws_dynamodb_table.registry_tables["Reports"].name
+    },
+    {
+      name : "BACKEND_TABLE_DEPLOY_KEYS"
+      value : aws_dynamodb_table.registry_tables["DeployKeys"].name
+    }
   ]
   task_secrets = [
     {
