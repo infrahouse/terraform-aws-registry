@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - 2026-10-11
+
+### Bug Fixes
+
+- Trust GitHub's immutable OIDC subject in registry client roles
+- Add .checkov.yml and enable point-in-time recovery on DynamoDB
+- Hook permission
+
+### Features
+
+- Implement Terraform module requirements, require AWS provider 6.x
+
+### Styling
+
+- Format tests with black 26
+
 ## [0.4.0] - 2025-11-23
 
 ### Features
