@@ -7,3 +7,5 @@ __pycache__
 terraform.tfvars
 .terraform.tfstate.lock.info
 pytest-*-output.log
+/site/
+.claude/reviews
