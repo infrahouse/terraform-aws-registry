@@ -47,9 +47,7 @@ def test_module(
 
     # Generate terraform.tf with specified AWS provider version
     with open(osp.join(terraform_dir, "terraform.tf"), "w") as fp:
-        fp.write(
-            dedent(
-                f"""
+        fp.write(dedent(f"""
                 terraform {{
                   required_version = "~> 1.5"
                   //noinspection HILUnresolvedReference
@@ -60,9 +58,7 @@ def test_module(
                     }}
                   }}
                 }}
-                """
-            )
-        )
+                """))
 
     with open(osp.join(terraform_dir, "terraform.tfvars"), "w") as fp:
         fp.write(f'region = "{aws_region}"\n')
