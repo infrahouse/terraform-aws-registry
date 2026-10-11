@@ -10,5 +10,10 @@ resource "aws_dynamodb_table" "registry_tables" {
     type = "S"
   }
 
+  # DeployKeys holds every module's deploy keys and Modules indexes the registry: keep them recoverable.
+  point_in_time_recovery {
+    enabled = true
+  }
+
   tags = local.default_module_tags
 }
