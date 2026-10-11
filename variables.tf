@@ -83,3 +83,26 @@ variable "service_name" {
   type        = string
   default     = "terraform-registry"
 }
+
+variable "replication_region" {
+  description = <<-EOT
+    AWS region for the cross-region replica of the bucket with module archives, for example "us-east-1".
+    Must differ from the region the registry runs in.
+  EOT
+  type        = string
+
+  validation {
+    condition     = can(regex("^[a-z]{2}(-[a-z]+)+-[0-9]+$", var.replication_region))
+    error_message = <<-EOT
+      replication_region must be an AWS region name such as "us-east-1". Got: ${var.replication_region}
+    EOT
+  }
+
+  validation {
+    condition     = var.replication_region != data.aws_region.current.region
+    error_message = <<-EOT
+      replication_region must differ from the region the registry runs in (${data.aws_region.current.region}).
+      Pick another region for the replica, for example "us-east-1" or "us-west-2".
+    EOT
+  }
+}

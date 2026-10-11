@@ -19,6 +19,9 @@ module "registry" {
   # The registry is published as registry.<zone name>.
   zone_id = var.zone_id
 
+  # Module archives are replicated to this region.
+  replication_region = var.replication_region
+
   # Cognito emails each user a temporary password and adds them to the admin group.
   cognito_users = var.cognito_users
 }

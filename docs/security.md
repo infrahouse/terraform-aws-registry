@@ -48,8 +48,8 @@ turn on MFA.
   HTTPS URLs to S3.
 - **At rest:** the S3 bucket is encrypted, versioned, and blocks public access. DynamoDB encrypts the tables by
   default.
-- **Recovery:** point-in-time recovery is on for all DynamoDB tables, and S3 versioning keeps overwritten or
-  deleted archives.
+- **Recovery:** point-in-time recovery is on for all DynamoDB tables. S3 versioning keeps overwritten or
+  deleted archives, and cross-region replication keeps a copy of every archive in `replication_region`.
 
 ## IAM
 

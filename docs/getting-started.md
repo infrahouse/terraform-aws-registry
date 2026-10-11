@@ -5,7 +5,8 @@ that downloads it.
 
 ## Prerequisites
 
-- **Terraform** `~> 1.8` and the **AWS provider** `~> 6.0`
+- **Terraform** `~> 1.9` and the **AWS provider** `~> 6.0`
+- **A second AWS region** for the replica of the module archive bucket (`replication_region`)
 - **A VPC** with an internet gateway attached. The module looks the gateway up from the VPC of the first
   frontend subnet.
 - **Public subnets** for the load balancer, in at least two availability zones
@@ -43,6 +44,8 @@ module "registry" {
   subnets_frontend = ["subnet-public-a", "subnet-public-b"]
   subnets_backend  = ["subnet-private-a", "subnet-private-b"]
   zone_id          = "Z1234567890ABC"
+
+  replication_region = "us-east-1"
 
   cognito_users = [
     {

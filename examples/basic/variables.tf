@@ -4,6 +4,12 @@ variable "region" {
   default     = "us-west-2"
 }
 
+variable "replication_region" {
+  description = "Region for the replica of the module archive bucket. Must differ from `region`."
+  type        = string
+  default     = "us-east-1"
+}
+
 variable "environment" {
   description = "Environment name, for example `production`. Goes to the `environment` tag."
   type        = string

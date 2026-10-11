@@ -11,7 +11,8 @@ back up, and keep highly available — just to let a handful of people sign in t
 replaces it with a managed Cognito user pool and wires everything Tapir needs around it:
 
 - **No identity server to operate** — Cognito is the user database and the OIDC provider
-- **Storage that needs no care** — module archives in S3, metadata in DynamoDB with point-in-time recovery
+- **Storage that needs no care** — module archives in S3, replicated to a second region; metadata in
+  DynamoDB with point-in-time recovery
 - **Keyless publishing from CI** — one IAM role per module repository that GitHub Actions assumes through OIDC
 - **Production defaults** — HTTPS with an ACM certificate, a DNS record, CloudWatch logs kept 365 days,
   and at least two Tapir tasks
@@ -23,7 +24,8 @@ replaces it with a managed Cognito user pool and wires everything Tapir needs ar
 - Cognito user pool, hosted sign-in domain, and OIDC app client, configured for Tapir
 - Cognito users created from a list of emails and added to the `admin` group
 - Cognito app client secret stored in Secrets Manager and readable only by the ECS task execution role
-- S3 bucket for module archives; DynamoDB tables for modules, providers, reports, and deploy keys
+- S3 bucket for module archives with cross-region replication; DynamoDB tables for modules, providers,
+  reports, and deploy keys
 - IAM roles for GitHub Actions that let a module repository read its deploy key and publish releases
 - Container Insights and CloudWatch Logs with 365-day retention
 
@@ -42,6 +44,8 @@ module "registry" {
   subnets_frontend = ["subnet-public-a", "subnet-public-b"]
   subnets_backend  = ["subnet-private-a", "subnet-private-b"]
   zone_id          = "Z1234567890ABC"
+
+  replication_region = "us-east-1"
 
   cognito_users = [
     {
@@ -82,4 +86,5 @@ See [Architecture](architecture.md) for each flow in detail.
 - [Examples](examples.md) — common deployment scenarios
 - [Security](security.md) — authentication, access to modules, and what to protect
 - [Troubleshooting](troubleshooting.md) — common issues and their fixes
+- [Upgrading](upgrading.md) — breaking changes between versions
 - [Changelog](changelog.md) — release history
