@@ -1,2 +1,12 @@
 pytest-infrahouse ~= 0.19
 infrahouse-core ~= 0.17
+bump2version ~= 1.0
+
+# Documentation dependencies
+diagrams ~= 0.25
+mkdocs-material ~= 9.7
+mkdocs-minify-plugin ~= 0.8
+mkdocs-glightbox ~= 0.4
+
+# Security
+checkov ~= 3.2
