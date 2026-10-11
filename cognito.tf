@@ -40,7 +40,7 @@ resource "aws_cognito_user_pool" "this" {
 # --- Hosted UI Domain ---
 # Uses a Cognito-managed domain like https://<prefix>.auth.<region>.amazoncognito.com
 resource "aws_cognito_user_pool_domain" "this" {
-  domain       = "${local.service_name}-${data.aws_region.current.name}"
+  domain       = "${local.service_name}-${data.aws_region.current.region}"
   user_pool_id = aws_cognito_user_pool.this.id
 }
 

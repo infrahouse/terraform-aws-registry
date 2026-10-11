@@ -1,5 +1,5 @@
 locals {
-  module_version = "0.4.0"
+  module_version = "0.5.0"
 
   service_name = var.service_name
 
@@ -11,6 +11,6 @@ locals {
 
   dynamodb_tables         = ["DeployKeys", "Modules", "Providers", "Reports"]
   registry_url            = "https://${module.ecs.dns_hostnames[0]}"
-  cognito_issuer          = "https://cognito-idp.${data.aws_region.current.name}.amazonaws.com/${aws_cognito_user_pool.this.id}"
+  cognito_issuer          = "https://cognito-idp.${data.aws_region.current.region}.amazonaws.com/${aws_cognito_user_pool.this.id}"
   minimum_password_length = 21
 }

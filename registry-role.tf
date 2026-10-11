@@ -16,7 +16,7 @@ data "aws_iam_policy_document" "registry_node_assume" {
     condition {
       test = "ArnLike"
       values = [
-        "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"
+        "arn:aws:ecs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:*"
       ]
       variable = "aws:SourceArn"
     }
@@ -30,7 +30,7 @@ data "aws_iam_policy_document" "registry_node_permissions" {
     ]
     resources = [
       for table in local.dynamodb_tables :
-      "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/${table}"
+      "arn:aws:dynamodb:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:table/${table}"
     ]
   }
   statement {

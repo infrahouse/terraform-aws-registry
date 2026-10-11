@@ -1,99 +1,103 @@
-# Terraform AWS Registry (Tapir + Cognito)
+# terraform-aws-registry
 
+[![Need Help?](https://img.shields.io/badge/Need%20Help%3F-Contact%20Us-0066CC)](https://infrahouse.com/contact)
+[![Docs](https://img.shields.io/badge/docs-github.io-blue)](https://infrahouse.github.io/terraform-aws-registry/)
+[![Registry](https://img.shields.io/badge/Terraform-Registry-purple?logo=terraform)](https://registry.terraform.io/modules/infrahouse/registry/aws/latest)
+[![Release](https://img.shields.io/github/release/infrahouse/terraform-aws-registry.svg)](https://github.com/infrahouse/terraform-aws-registry/releases/latest)
+[![AWS ECS](https://img.shields.io/badge/AWS-ECS-orange?logo=amazonecs)](https://aws.amazon.com/ecs/)
+[![AWS Cognito](https://img.shields.io/badge/AWS-Cognito-orange?logo=amazonwebservices)](https://aws.amazon.com/cognito/)
+[![AWS S3](https://img.shields.io/badge/AWS-S3-orange?logo=amazons3)](https://aws.amazon.com/s3/)
+[![AWS DynamoDB](https://img.shields.io/badge/AWS-DynamoDB-orange?logo=amazondynamodb)](https://aws.amazon.com/dynamodb/)
+[![Security](https://img.shields.io/github/actions/workflow/status/infrahouse/terraform-aws-registry/vuln-scanner-pr.yml?label=Security)](https://github.com/infrahouse/terraform-aws-registry/actions/workflows/vuln-scanner-pr.yml)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-[![InfraHouse](https://img.shields.io/badge/InfraHouse-Terraform_Module-blue?logo=terraform)](https://registry.terraform.io/modules/infrahouse/registry/aws/latest)
-[![License](https://img.shields.io/github/license/infrahouse/terraform-aws-registry)](LICENSE)
-[![AWS Cognito](https://img.shields.io/badge/Auth-AWS_Cognito-orange?logo=amazonaws)](https://aws.amazon.com/cognito/)
-[![Tapir](https://img.shields.io/badge/Backend-Tapir-lightgrey?logo=open-source-initiative)](https://github.com/PacoVK/tapir)
-[![GitHub Actions](https://img.shields.io/github/actions/workflow/status/infrahouse/terraform-aws-registry/terraform-CI.yml?logo=githubactions&label=CI)](https://github.com/infrahouse/terraform-aws-registry/actions)
+A Terraform module that runs a private Terraform module registry in your AWS account. The registry is
+[Tapir](https://github.com/PacoVK/tapir), an open-source implementation of the Terraform registry protocol. It runs
+on ECS behind an Application Load Balancer, and admins sign in to its web UI through Amazon Cognito.
 
-A Terraform module that provisions a self-hosted Terraform Registry powered by [Tapir](https://github.com/PacoVK/tapir)
-and authenticated through Amazon Cognito instead of Keycloak.
+## Why This Module?
 
-This module is ideal for organizations that want a lightweight, 
-standards-compliant Terraform Registry integrated into AWS-native authentication 
-without running a heavy Keycloak cluster.
+Tapir ships with Keycloak as its identity provider. Running Keycloak means another stateful service to patch,
+back up, and keep highly available — just to let a handful of people sign in to a registry UI. This module
+replaces it with a managed Cognito user pool and wires everything Tapir needs around it:
 
-# 🏗️ Overview
+- **No identity server to operate** — Cognito is the user database and the OIDC provider
+- **Storage that needs no care** — module archives in S3, metadata in DynamoDB with point-in-time recovery
+- **Keyless publishing from CI** — one IAM role per module repository that GitHub Actions assumes through OIDC
+- **Production defaults** — HTTPS with an ACM certificate, a DNS record, CloudWatch logs kept 365 days,
+  and at least two Tapir tasks
 
-This module deploys the open-source Tapir Terraform Registry inside your AWS environment, complete with:
+## Features
 
-* **Tapir application** — packaged in a container, served via AWS ECS.
-* **Cognito User Pool** — used as both user database and OIDC Identity Provider (IdP).
-* **Application Load Balancer** with HTTPS termination; health checks automatically configured for Tapir.
-* ACM SSL certificate, Route 53 DNS record, and CloudWatch logs integration.
+- Tapir registry on ECS (EC2 launch type) with auto scaling between `task_min_count` and `task_max_count` tasks
+- Internet-facing ALB with an ACM certificate and a Route 53 record, `registry.<your zone>` by default
+- Cognito user pool, hosted sign-in domain, and OIDC app client, configured for Tapir
+- Cognito users created from a list of emails and added to the `admin` group
+- Cognito app client secret stored in Secrets Manager and readable only by the ECS task execution role
+- S3 bucket for module archives; DynamoDB tables for modules, providers, reports, and deploy keys
+- IAM roles for GitHub Actions that let a module repository read its deploy key and publish releases
+- Container Insights and CloudWatch Logs with 365-day retention
 
-Once deployed, the registry is available at a URL composed of:
-* **Hostname**: Configurable via `registry_hostname` variable (defaults to `registry`)
-* **Domain**: Your Route53 hosted zone (specified via `zone_id` variable)
-
-**Example**: If your Route53 zone is `example.com` and you use the default hostname, the registry will be accessible at `https://registry.example.com`
-
-# 🔐 Authentication
-
-Instead of Keycloak, this module configures a managed Amazon Cognito user pool as your IdP.
-
-**Flow**
-
-* A user accesses the Tapir registry URL (https://registry.example.com).
-* Tapir redirects them to the Cognito Hosted UI.
-* Cognito authenticates the user (email/password).
-* Cognito returns an ID token containing:
-```json
-{
-  "cognito:groups": ["admin"],
-  "email": "user@example.com"
-}
-```
-* Tapir and Quarkus read the `cognito:groups` claim from the ID token and authorize access - regular or privileged user
-
-**Role mapping**
-* The module creates a Cognito user group called `admin`
-* Users are created based on the `cognito_users` variable (list of email addresses and names)
-* All users specified in `cognito_users` are automatically added to the `admin` group
-* Cognito automatically inserts the `cognito:groups` claim into ID tokens for users who are members of the admin group
-* Tapir reads the `cognito:groups` claim to determine the user's access level (admin vs regular user)
-
-
-# ⚙️ Key Features
-
-* Cognito OIDC integration with automatic app-client, domain, and redirect-URI setup.
-* Tapir automatically configured for Cognito:
-  * `AUTH_ENDPOINT`, `AUTH_CLIENT_ID`, `AUTH_CLIENT_SECRET` injected via environment variables.
-  * Proper `QUARKUS_OIDC_ROLES_*` settings for role recognition.
-* ALB health checks configured to accept HTTP 302 responses (redirect to Cognito login) as healthy
-  * Note: Tapir doesn't currently include the SmallRye Health endpoints (`/q/health/ready`) in Quarkus; future enhancement could add a proper health endpoint
-
-# 🚀 Usage Example
+## Quick Start
 
 ```hcl
-module "terraform-registry" {
-  source  = "infrahouse/registry/aws"
-  version = "0.4.0"
+module "registry" {
+  source  = "registry.infrahouse.com/infrahouse/registry/aws"
+  version = "0.5.0"
 
-  environment      = "development"
+  providers = {
+    aws = aws
+  }
 
-  # Networking
-  subnets_backend  = var.backend_subnets
-  subnets_frontend = var.frontend_subnets
-  zone_id          = var.zone_id
+  environment      = "production"
+  subnets_frontend = ["subnet-public-a", "subnet-public-b"]
+  subnets_backend  = ["subnet-private-a", "subnet-private-b"]
+  zone_id          = "Z1234567890ABC"
 
-  # Create Cognito users
   cognito_users = [
     {
-      email     = "aleks@infrahouse.com"
-      full_name = "Aleks"
+      email     = "admin@example.com"
+      full_name = "Jane Admin"
     }
   ]
 }
 ```
-After you apply the Terraform configuration, Cognito automatically sends an email to each user 
-specified in `cognito_users` with a **temporary password**.
 
-When the user visits the registry (for example, https://registry.example.com) and signs in for the first time, 
-Cognito will prompt them to set a new **permanent password** before granting access.
+With a zone named `example.com` the registry comes up at `https://registry.example.com`. Each user in
+`cognito_users` gets an email from Cognito with a temporary password; on first sign-in Cognito asks them to set a
+permanent one.
 
-Once the password is changed, the user is redirected back to Tapir and can immediately use the private Terraform Registry.
+To publish modules from GitHub Actions, list the module repositories in `terraform_modules` and create a deploy
+key for each module in the Tapir UI. Consumers need no credentials:
+
+```hcl
+module "key" {
+  source  = "registry.example.com/example/key/aws"
+  version = "1.0.0"
+}
+```
+
+## Architecture
+
+![Terraform Registry Architecture](docs/assets/architecture.png)
+
+## Documentation
+
+Full documentation is available at
+[infrahouse.github.io/terraform-aws-registry](https://infrahouse.github.io/terraform-aws-registry/).
+
+- [Getting Started](https://infrahouse.github.io/terraform-aws-registry/getting-started/) — prerequisites, first
+  deployment, first published module
+- [Architecture](https://infrahouse.github.io/terraform-aws-registry/architecture/) — components, sign-in,
+  download, and publishing flows
+- [Configuration](https://infrahouse.github.io/terraform-aws-registry/configuration/) — every variable and output
+- [Examples](https://infrahouse.github.io/terraform-aws-registry/examples/) — common deployment scenarios
+- [Security](https://infrahouse.github.io/terraform-aws-registry/security/) — who can read, publish, and administer
+  modules
+- [Troubleshooting](https://infrahouse.github.io/terraform-aws-registry/troubleshooting/) — common issues and
+  their fixes
+
+## Usage
 
 <!-- BEGIN_TF_DOCS -->
 
@@ -102,23 +106,23 @@ Once the password is changed, the user is redirected back to Tapir and can immed
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.8 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.62, < 7.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.62, < 7.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.68.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.9.1 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_ecs"></a> [ecs](#module\_ecs) | registry.infrahouse.com/infrahouse/ecs/aws | 5.12.0 |
-| <a name="module_registry-client-roles"></a> [registry-client-roles](#module\_registry-client-roles) | registry.infrahouse.com/infrahouse/github-role/aws | 1.4.0 |
-| <a name="module_registry_client_secret"></a> [registry\_client\_secret](#module\_registry\_client\_secret) | registry.infrahouse.com/infrahouse/secret/aws | 1.1.0 |
+| <a name="module_ecs"></a> [ecs](#module\_ecs) | registry.infrahouse.com/infrahouse/ecs/aws | 6.1.0 |
+| <a name="module_registry-client-roles"></a> [registry-client-roles](#module\_registry-client-roles) | registry.infrahouse.com/infrahouse/github-role/aws | 1.6.0 |
+| <a name="module_registry_client_secret"></a> [registry\_client\_secret](#module\_registry\_client\_secret) | registry.infrahouse.com/infrahouse/secret/aws | 1.1.1 |
 | <a name="module_terraform-registry-bucket"></a> [terraform-registry-bucket](#module\_terraform-registry-bucket) | registry.infrahouse.com/infrahouse/s3-bucket/aws | 0.2.0 |
 
 ## Resources
@@ -177,3 +181,19 @@ Once the password is changed, the user is redirected back to Tapir and can immed
 | <a name="output_registry_client_role_names"></a> [registry\_client\_role\_names](#output\_registry\_client\_role\_names) | Map of repository names to their IAM role names for registry clients |
 | <a name="output_registry_url"></a> [registry\_url](#output\_registry\_url) | HTTPS URL of the Terraform registry |
 <!-- END_TF_DOCS -->
+
+## Examples
+
+See the [`examples/`](examples/) directory for complete working examples:
+
+- [`examples/basic`](examples/basic) — a registry with Cognito users
+- [`examples/module-publishing`](examples/module-publishing) — a registry plus IAM roles for module repositories
+  that publish from GitHub Actions
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+This project is licensed under the Apache 2.0 License — see the [LICENSE](LICENSE) file for details.

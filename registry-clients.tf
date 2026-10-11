@@ -1,7 +1,7 @@
 ### IAM roles that can upload to the registry
 module "registry-client-roles" {
   source      = "registry.infrahouse.com/infrahouse/github-role/aws"
-  version     = "1.4.0"
+  version     = "1.6.0"
   for_each    = toset(var.terraform_modules)
   gh_org_name = var.gh_org_name
   repo_name   = each.key

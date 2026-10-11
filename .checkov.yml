@@ -1,0 +1,11 @@
+soft-fail: false
+framework:
+  - terraform
+skip-check:
+  # InfraHouse modules come from registry.infrahouse.com, pinned to exact versions, not commit hashes
+  - CKV_TF_1
+  # The DynamoDB tables use the AWS-managed key, the InfraHouse default for encryption at rest
+  - CKV_AWS_119
+skip-path:
+  - .terraform
+  - test_data

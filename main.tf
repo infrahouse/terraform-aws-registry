@@ -52,7 +52,7 @@ module "ecs" {
     },
     {
       name : "AWS_REGION",
-      value : data.aws_region.current.name
+      value : data.aws_region.current.region
     },
     {
       name : "STORAGE_CONFIG"
@@ -64,7 +64,7 @@ module "ecs" {
     },
     {
       name : "S3_STORAGE_BUCKET_REGION"
-      value : data.aws_region.current.name
+      value : data.aws_region.current.region
     },
     {
       name : "REGISTRY_HOSTNAME"
