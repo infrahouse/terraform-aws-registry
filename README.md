@@ -116,9 +116,9 @@ Once the password is changed, the user is redirected back to Tapir and can immed
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_ecs"></a> [ecs](#module\_ecs) | registry.infrahouse.com/infrahouse/ecs/aws | 5.12.0 |
-| <a name="module_registry-client-roles"></a> [registry-client-roles](#module\_registry-client-roles) | registry.infrahouse.com/infrahouse/github-role/aws | 1.4.0 |
-| <a name="module_registry_client_secret"></a> [registry\_client\_secret](#module\_registry\_client\_secret) | registry.infrahouse.com/infrahouse/secret/aws | 1.1.0 |
+| <a name="module_ecs"></a> [ecs](#module\_ecs) | registry.infrahouse.com/infrahouse/ecs/aws | 6.1.0 |
+| <a name="module_registry-client-roles"></a> [registry-client-roles](#module\_registry-client-roles) | registry.infrahouse.com/infrahouse/github-role/aws | 1.6.0 |
+| <a name="module_registry_client_secret"></a> [registry\_client\_secret](#module\_registry\_client\_secret) | registry.infrahouse.com/infrahouse/secret/aws | 1.1.1 |
 | <a name="module_terraform-registry-bucket"></a> [terraform-registry-bucket](#module\_terraform-registry-bucket) | registry.infrahouse.com/infrahouse/s3-bucket/aws | 0.2.0 |
 
 ## Resources
