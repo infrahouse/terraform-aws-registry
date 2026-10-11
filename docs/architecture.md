@@ -11,6 +11,7 @@
 | Cognito user pool, domain, app client, `admin` group | this module | Sign-in for the web UI |
 | Secrets Manager secret | [infrahouse/secret/aws](https://github.com/infrahouse/terraform-aws-secret) | Holds the Cognito app client secret |
 | S3 bucket `terraform-registry-*` | [infrahouse/s3-bucket/aws](https://github.com/infrahouse/terraform-aws-s3-bucket) | Module archives |
+| S3 bucket `terraform-registry--replica*` | [infrahouse/s3-bucket/aws](https://github.com/infrahouse/terraform-aws-s3-bucket) | Replica of the archives in `replication_region` |
 | DynamoDB tables | this module | `Modules`, `Providers`, `Reports`, `DeployKeys` |
 | IAM role `registry-node-*` | this module | Task role: the Tapir container's access to the tables and the bucket |
 | IAM roles `ih-tf-<repo>-github` | [infrahouse/github-role/aws](https://github.com/infrahouse/terraform-aws-github-role) | One per `terraform_modules` entry, for publishing from GitHub Actions |
@@ -77,7 +78,8 @@ ALB treats `302` as healthy. Inside the container, ECS checks that the Java proc
 ## Storage
 
 - **S3** holds the module archives under `<namespace>/<name>/<provider>/<version>.zip`. The bucket comes from
-  [infrahouse/s3-bucket/aws](https://github.com/infrahouse/terraform-aws-s3-bucket), which turns on encryption
-  and blocks public access.
+  [infrahouse/s3-bucket/aws](https://github.com/infrahouse/terraform-aws-s3-bucket), which turns on encryption,
+  versioning, and blocks public access. It replicates every new archive to a bucket in `replication_region`,
+  so a regional outage or a deleted bucket doesn't lose what was published.
 - **DynamoDB** holds everything else. The tables use on-demand capacity and have point-in-time recovery on, so
   the `DeployKeys` and `Modules` tables can be restored to any second in the last 35 days.

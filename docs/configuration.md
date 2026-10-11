@@ -9,6 +9,7 @@
 | [`subnets_backend`](#subnets_backend) | `list(string)` | n/a | yes |
 | [`zone_id`](#zone_id) | `string` | n/a | yes |
 | [`cognito_users`](#cognito_users) | `list(object)` | n/a | yes |
+| [`replication_region`](#replication_region) | `string` | n/a | yes |
 | [`registry_hostname`](#registry_hostname) | `string` | `"registry"` | no |
 | [`service_name`](#service_name) | `string` | `"terraform-registry"` | no |
 | [`task_min_count`](#task_min_count-and-task_max_count) | `number` | `2` | no |
@@ -76,6 +77,20 @@ cognito_users = [
 
 Removing an entry deletes the user. Every user is an admin; the module has no read-only role, and reading
 modules through the registry API needs no account at all.
+
+### `replication_region`
+
+Region for the cross-region replica of the bucket with module archives. Archives are the only copy of what was
+published, so the module replicates each new one to a second bucket in this region. Replication also turns on
+versioning of the archive bucket. The region must differ from the one the registry runs in.
+
+```hcl
+replication_region = "us-east-1"
+```
+
+!!! note
+    S3 replicates objects written after replication is turned on. When you upgrade an existing registry, the
+    archives published before the upgrade are not copied — see [Upgrading](upgrading.md).
 
 ### `registry_hostname`
 

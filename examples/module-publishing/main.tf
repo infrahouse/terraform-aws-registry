@@ -19,6 +19,9 @@ module "registry" {
   zone_id          = var.zone_id
   cognito_users    = var.cognito_users
 
+  # Module archives are replicated to this region.
+  replication_region = var.replication_region
+
   # One IAM role per module repository. A release workflow in the repository assumes the role,
   # reads the module's deploy key from DynamoDB, and uploads the module with `ih-registry upload`.
   gh_org_name       = var.gh_org_name

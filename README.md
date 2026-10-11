@@ -22,7 +22,8 @@ back up, and keep highly available — just to let a handful of people sign in t
 replaces it with a managed Cognito user pool and wires everything Tapir needs around it:
 
 - **No identity server to operate** — Cognito is the user database and the OIDC provider
-- **Storage that needs no care** — module archives in S3, metadata in DynamoDB with point-in-time recovery
+- **Storage that needs no care** — module archives in S3, replicated to a second region; metadata in
+  DynamoDB with point-in-time recovery
 - **Keyless publishing from CI** — one IAM role per module repository that GitHub Actions assumes through OIDC
 - **Production defaults** — HTTPS with an ACM certificate, a DNS record, CloudWatch logs kept 365 days,
   and at least two Tapir tasks
@@ -34,7 +35,8 @@ replaces it with a managed Cognito user pool and wires everything Tapir needs ar
 - Cognito user pool, hosted sign-in domain, and OIDC app client, configured for Tapir
 - Cognito users created from a list of emails and added to the `admin` group
 - Cognito app client secret stored in Secrets Manager and readable only by the ECS task execution role
-- S3 bucket for module archives; DynamoDB tables for modules, providers, reports, and deploy keys
+- S3 bucket for module archives with cross-region replication; DynamoDB tables for modules, providers,
+  reports, and deploy keys
 - IAM roles for GitHub Actions that let a module repository read its deploy key and publish releases
 - Container Insights and CloudWatch Logs with 365-day retention
 
@@ -53,6 +55,8 @@ module "registry" {
   subnets_frontend = ["subnet-public-a", "subnet-public-b"]
   subnets_backend  = ["subnet-private-a", "subnet-private-b"]
   zone_id          = "Z1234567890ABC"
+
+  replication_region = "us-east-1"
 
   cognito_users = [
     {
@@ -96,6 +100,7 @@ Full documentation is available at
   modules
 - [Troubleshooting](https://infrahouse.github.io/terraform-aws-registry/troubleshooting/) — common issues and
   their fixes
+- [Upgrading](https://infrahouse.github.io/terraform-aws-registry/upgrading/) — breaking changes between versions
 
 ## Usage
 
@@ -105,7 +110,7 @@ Full documentation is available at
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.8 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.9 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.0 |
 
@@ -123,7 +128,7 @@ Full documentation is available at
 | <a name="module_ecs"></a> [ecs](#module\_ecs) | registry.infrahouse.com/infrahouse/ecs/aws | 6.1.0 |
 | <a name="module_registry-client-roles"></a> [registry-client-roles](#module\_registry-client-roles) | registry.infrahouse.com/infrahouse/github-role/aws | 1.6.0 |
 | <a name="module_registry_client_secret"></a> [registry\_client\_secret](#module\_registry\_client\_secret) | registry.infrahouse.com/infrahouse/secret/aws | 1.1.1 |
-| <a name="module_terraform-registry-bucket"></a> [terraform-registry-bucket](#module\_terraform-registry-bucket) | registry.infrahouse.com/infrahouse/s3-bucket/aws | 0.2.0 |
+| <a name="module_terraform-registry-bucket"></a> [terraform-registry-bucket](#module\_terraform-registry-bucket) | registry.infrahouse.com/infrahouse/s3-bucket/aws | 0.9.0 |
 
 ## Resources
 
@@ -162,6 +167,7 @@ Full documentation is available at
 | <a name="input_gh_org_name"></a> [gh\_org\_name](#input\_gh\_org\_name) | GitHub organization name that owns the Terraform module repositories | `string` | `"infrahouse"` | no |
 | <a name="input_on_demand_base_capacity"></a> [on\_demand\_base\_capacity](#input\_on\_demand\_base\_capacity) | Minimum number of on-demand instances in the Auto Scaling Group | `number` | `1` | no |
 | <a name="input_registry_hostname"></a> [registry\_hostname](#input\_registry\_hostname) | Hostname for the Terraform registry (will be combined with the Route53 zone) | `string` | `"registry"` | no |
+| <a name="input_replication_region"></a> [replication\_region](#input\_replication\_region) | AWS region for the cross-region replica of the bucket with module archives, for example "us-east-1".<br/>Must differ from the region the registry runs in. | `string` | n/a | yes |
 | <a name="input_service_name"></a> [service\_name](#input\_service\_name) | Name of the service | `string` | `"terraform-registry"` | no |
 | <a name="input_subnets_backend"></a> [subnets\_backend](#input\_subnets\_backend) | List of subnet IDs for ECS instances and backend services | `list(string)` | n/a | yes |
 | <a name="input_subnets_frontend"></a> [subnets\_frontend](#input\_subnets\_frontend) | List of subnet IDs for the load balancer | `list(string)` | n/a | yes |

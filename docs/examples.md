@@ -21,6 +21,8 @@ module "registry" {
   subnets_backend  = module.network.subnet_private_ids
   zone_id          = aws_route53_zone.example.zone_id
 
+  replication_region = "us-east-1"
+
   cognito_users = [
     {
       email     = "admin@example.com"
@@ -51,6 +53,8 @@ module "registry" {
   subnets_frontend = module.network.subnet_public_ids
   subnets_backend  = module.network.subnet_private_ids
   zone_id          = aws_route53_zone.example.zone_id
+
+  replication_region = "us-east-1"
 
   cognito_users = [
     {
@@ -134,6 +138,8 @@ module "registry" {
   subnets_backend  = module.network.subnet_private_ids
   zone_id          = aws_route53_zone.example.zone_id
 
+  replication_region = "us-east-1"
+
   cognito_users = [
     {
       email     = "admin@example.com"
@@ -161,6 +167,8 @@ module "registry" {
   subnets_frontend = module.network.subnet_public_ids
   subnets_backend  = module.network.subnet_private_ids
   zone_id          = aws_route53_zone.example.zone_id
+
+  replication_region = "us-east-1"
 
   task_min_count          = 2
   task_max_count          = 2

@@ -42,6 +42,7 @@ nav:
   - Examples: examples.md
   - Security: security.md
   - Troubleshooting: troubleshooting.md
+  - Upgrading: upgrading.md
   - Changelog: changelog.md
 
 markdown_extensions:
