@@ -7,7 +7,7 @@ provider "aws" {
 # https://github.com/infrahouse/terraform-aws-gh-identity-provider
 module "registry" {
   source  = "registry.infrahouse.com/infrahouse/registry/aws"
-  version = "0.4.0"
+  version = "0.5.0"
 
   providers = {
     aws = aws

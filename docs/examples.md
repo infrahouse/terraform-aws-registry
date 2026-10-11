@@ -10,7 +10,7 @@ A registry with one admin, published at `registry.<zone>`.
 ```hcl
 module "registry" {
   source  = "registry.infrahouse.com/infrahouse/registry/aws"
-  version = "0.4.0"
+  version = "0.5.0"
 
   providers = {
     aws = aws
@@ -41,7 +41,7 @@ Every repository in `terraform_modules` gets an IAM role its release workflow ca
 ```hcl
 module "registry" {
   source  = "registry.infrahouse.com/infrahouse/registry/aws"
-  version = "0.4.0"
+  version = "0.5.0"
 
   providers = {
     aws = aws
@@ -120,7 +120,7 @@ instance because the default Cognito domain `terraform-registry-<region>` is alr
 ```hcl
 module "registry" {
   source  = "registry.infrahouse.com/infrahouse/registry/aws"
-  version = "0.4.0"
+  version = "0.5.0"
 
   providers = {
     aws = aws
@@ -151,7 +151,7 @@ the way it reclaims spot instances.
 ```hcl
 module "registry" {
   source  = "registry.infrahouse.com/infrahouse/registry/aws"
-  version = "0.4.0"
+  version = "0.5.0"
 
   providers = {
     aws = aws
